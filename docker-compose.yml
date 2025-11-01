@@ -16,7 +16,7 @@ services:
       - ols-network  # CAMBIADO: De 'default' a 'ols-network'
 
   litespeed:
-    image: litespeedtech/openlitespeed:${OLS_VERSION}-${PHP_VERSION}
+    image: litespeedtech/openlitespeed:${PHP_VERSION}
     container_name: litespeed
     env_file:
       - .env
