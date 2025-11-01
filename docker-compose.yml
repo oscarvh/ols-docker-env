@@ -13,7 +13,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     restart: always
     networks:
-      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
+      - ols-network
 
   litespeed:
     image: litespeedtech/openlitespeed:${OLS_VERSION}-${PHP_VERSION}
@@ -27,25 +27,23 @@ services:
       - ./sites:/var/www/vhosts/
       - ./acme:/root/.acme.sh/
       - ./logs:/usr/local/lsws/logs/
-    # ELIMINADO: El bloque 'ports' ha sido completamente eliminado. Dokploy se encarga.
     restart: always
     environment:
       TZ: ${TimeZone}
     networks:
-      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
-      - dokploy      # CORRECTO: Esta se mantiene para que Dokploy pueda acceder.
+      - ols-network
+      - dokploy-network  # <--- CAMBIO AQUÍ
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}
     env_file:
       - .env
-    # ELIMINADO: El bloque 'ports' ha sido completamente eliminado.
     environment:
       PMA_HOST: mysql
     restart: always
     networks:
-      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
-      - dokploy      # AÑADIDO: Para poder acceder a él a través de un dominio en Dokploy
+      - ols-network
+      - dokploy-network  # <--- CAMBIO AQUÍ
 
   redis:
     image: "redis:alpine"
@@ -58,10 +56,10 @@ services:
       - REDIS_REPLICATION_MODE=master
     restart: always
     networks:
-      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
+      - ols-network
 
 networks:
   ols-network:
     driver: bridge
-  dokploy:
+  dokploy-network:    # <--- CAMBIO AQUÍ
     external: true
