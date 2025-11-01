@@ -13,7 +13,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     restart: always
     networks:
-      - default
+      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
+
   litespeed:
     image: litespeedtech/openlitespeed:${OLS_VERSION}-${PHP_VERSION}
     container_name: litespeed
@@ -26,33 +27,30 @@ services:
       - ./sites:/var/www/vhosts/
       - ./acme:/root/.acme.sh/
       - ./logs:/usr/local/lsws/logs/
-    ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-      - 7080:7080
+    # ELIMINADO: El bloque 'ports' ha sido completamente eliminado. Dokploy se encarga.
     restart: always
     environment:
       TZ: ${TimeZone}
     networks:
-      - default
-      - dokploy 
+      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
+      - dokploy      # CORRECTO: Esta se mantiene para que Dokploy pueda acceder.
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}
     env_file:
       - .env
-    ports:
-      - 8080:80
+    # ELIMINADO: El bloque 'ports' ha sido completamente eliminado.
     environment:
       PMA_HOST: mysql
     restart: always
     networks:
-      - default
+      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
+      - dokploy      # AÑADIDO: Para poder acceder a él a través de un dominio en Dokploy
+
   redis:
     image: "redis:alpine"
     logging:
       driver: none
-    # command: redis-server --requirepass 8b405f60665e48f795752e534d93b722
     volumes:
       - ./redis/data:/data
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
@@ -60,9 +58,10 @@ services:
       - REDIS_REPLICATION_MODE=master
     restart: always
     networks:
-      - default
+      - ols-network  # CAMBIADO: De 'default' a 'ols-network'
+
 networks:
   ols-network:
     driver: bridge
-  dokploy: # <--- AÑADE ESTA LÍNEA Y LA SIGUIENTE
+  dokploy:
     external: true
