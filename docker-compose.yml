@@ -36,6 +36,7 @@ services:
       TZ: ${TimeZone}
     networks:
       - default
+      - dokploy 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}
     env_file:
@@ -61,5 +62,7 @@ services:
     networks:
       - default
 networks:
-  default:
+  ols-network:
     driver: bridge
+  dokploy: # <--- AÑADE ESTA LÍNEA Y LA SIGUIENTE
+    external: true
